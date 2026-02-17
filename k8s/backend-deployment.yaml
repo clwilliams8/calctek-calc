@@ -95,10 +95,45 @@ spec:
               cpu: 500m
               memory: 512Mi
 
-      # Init container to copy backend source and run migrations
+      # Init container to copy backend source, run migrations, and cache config
       initContainers:
         - name: copy-backend
           image: BACKEND_IMAGE_PLACEHOLDER
+          env:
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: calctek-calc-secrets
+                  key: APP_KEY
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: calctek-calc-secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: calctek-calc-secrets
+                  key: GOOGLE_CLIENT_SECRET
+            - name: APP_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: calctek-calc-config
+                  key: APP_URL
+            - name: FRONTEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: calctek-calc-config
+                  key: FRONTEND_URL
+            - name: GOOGLE_REDIRECT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: calctek-calc-config
+                  key: GOOGLE_REDIRECT_URI
+            - name: DB_CONNECTION
+              value: "sqlite"
+            - name: DB_DATABASE
+              value: "/var/www/html/database/database.sqlite"
           command:
             - sh
             - -c
@@ -106,6 +141,9 @@ spec:
               cp -r /var/www/html/* /shared/
               cp -r /var/www/html/database/. /db/
               cd /shared && php artisan migrate --force
+              cd /shared && php artisan config:cache
+              chown -R www-data:www-data /shared/storage /shared/bootstrap/cache
+              chown -R www-data:www-data /db
           volumeMounts:
             - name: backend-code
               mountPath: /shared
