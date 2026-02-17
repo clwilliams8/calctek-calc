@@ -4,11 +4,11 @@
 
 | Service | URL |
 |---------|-----|
-| **Frontend (App)** | http://app.34-27-81-95.sslip.io |
-| **Backend API** | http://api.34-27-81-95.sslip.io |
-| **API Health Check** | http://api.34-27-81-95.sslip.io/health |
-| **GraphQL Endpoint** | http://api.34-27-81-95.sslip.io/graphql |
-| **Documentation** | http://docs.34-27-81-95.sslip.io |
+| **Frontend (App)** | https://app.34-27-81-95.sslip.io |
+| **Backend API** | https://api.34-27-81-95.sslip.io |
+| **API Health Check** | https://api.34-27-81-95.sslip.io/health |
+| **GraphQL Endpoint** | https://api.34-27-81-95.sslip.io/graphql |
+| **Documentation** | https://docs.34-27-81-95.sslip.io |
 
 ## GCP Infrastructure
 
@@ -27,13 +27,13 @@
 To enable Google Sign-In on the production deployment, add this **Authorized redirect URI** in [Google Cloud Console > APIs & Credentials > OAuth 2.0 Client](https://console.cloud.google.com/apis/credentials):
 
 ```
-http://api.34-27-81-95.sslip.io/auth/google/callback
+https://api.34-27-81-95.sslip.io/auth/google/callback
 ```
 
 Also add the frontend origin as an **Authorized JavaScript origin**:
 
 ```
-http://app.34-27-81-95.sslip.io
+https://app.34-27-81-95.sslip.io
 ```
 
 ## Common Operations

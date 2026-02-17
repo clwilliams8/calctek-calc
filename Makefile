@@ -344,7 +344,7 @@ gke-build:
 		-o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null); \
 	if [ -n "$$LB_IP" ]; then \
 		SSLIP_IP=$$(echo $$LB_IP | tr '.' '-'); \
-		API_URL="http://api.$$SSLIP_IP.sslip.io"; \
+		API_URL="https://api.$$SSLIP_IP.sslip.io"; \
 		echo "$(CYAN)Baking VITE_API_URL=$$API_URL into frontend build$(NC)"; \
 	else \
 		API_URL=""; \
@@ -426,8 +426,8 @@ gke-deploy:
 	APP_HOST="app.$$SSLIP_IP.sslip.io"; \
 	API_HOST="api.$$SSLIP_IP.sslip.io"; \
 	DOCS_HOST="docs.$$SSLIP_IP.sslip.io"; \
-	API_URL="http://$$API_HOST"; \
-	FRONTEND_URL="http://$$APP_HOST"; \
+	API_URL="https://$$API_HOST"; \
+	FRONTEND_URL="https://$$APP_HOST"; \
 	echo "$(CYAN)Updating ConfigMap with API URL: $$API_URL$(NC)"; \
 	kubectl create configmap calctek-calc-config \
 		--namespace $(K8S_NAMESPACE) \
@@ -458,9 +458,9 @@ gke-deploy:
 	echo "$(GREEN)Deployment complete!$(NC)"; \
 	echo ""; \
 	echo "$(BOLD)Live URLs:$(NC)"; \
-	echo "  $(CYAN)Frontend:$(NC)  http://$$APP_HOST"; \
-	echo "  $(CYAN)API:$(NC)       http://$$API_HOST"; \
-	echo "  $(CYAN)Docs:$(NC)      http://$$DOCS_HOST"
+	echo "  $(CYAN)Frontend:$(NC)  https://$$APP_HOST"; \
+	echo "  $(CYAN)API:$(NC)       https://$$API_HOST"; \
+	echo "  $(CYAN)Docs:$(NC)      https://$$DOCS_HOST"
 
 # Get the LoadBalancer external IP
 gke-ip:
@@ -479,10 +479,10 @@ gke-urls:
 	echo "$(DIVIDER)"; \
 	echo "$(BOLD)Live URLs (IP: $$LB_IP):$(NC)"; \
 	echo "$(DIVIDER)"; \
-	echo "  $(CYAN)Frontend:$(NC)  http://app.$$SSLIP_IP.sslip.io"; \
-	echo "  $(CYAN)API:$(NC)       http://api.$$SSLIP_IP.sslip.io"; \
-	echo "  $(CYAN)Docs:$(NC)      http://docs.$$SSLIP_IP.sslip.io"; \
-	echo "  $(CYAN)Health:$(NC)    http://api.$$SSLIP_IP.sslip.io/health"; \
+	echo "  $(CYAN)Frontend:$(NC)  https://app.$$SSLIP_IP.sslip.io"; \
+	echo "  $(CYAN)API:$(NC)       https://api.$$SSLIP_IP.sslip.io"; \
+	echo "  $(CYAN)Docs:$(NC)      https://docs.$$SSLIP_IP.sslip.io"; \
+	echo "  $(CYAN)Health:$(NC)    https://api.$$SSLIP_IP.sslip.io/health"; \
 	echo "$(DIVIDER)"
 
 # Show GKE resource status
@@ -509,7 +509,7 @@ gke-health:
 	fi; \
 	SSLIP_IP=$$(echo $$LB_IP | tr '.' '-'); \
 	echo "$(CYAN)Checking GKE backend health...$(NC)"; \
-	curl -s "http://api.$$SSLIP_IP.sslip.io/health" | python3 -m json.tool 2>/dev/null || \
+	curl -sk "https://api.$$SSLIP_IP.sslip.io/health" | python3 -m json.tool 2>/dev/null || \
 		echo "$(RED)Backend not responding$(NC)"
 
 # Full teardown — delete cluster and registry
