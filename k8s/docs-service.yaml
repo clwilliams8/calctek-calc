@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: docs-service
+  namespace: calctek-calc
+  labels:
+    app: docs
+spec:
+  type: ClusterIP
+  selector:
+    app: docs
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP

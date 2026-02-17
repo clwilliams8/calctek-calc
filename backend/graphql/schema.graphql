@@ -1,0 +1,36 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Query {
+    me: User @auth
+    calculations: [Calculation!]! @guard @field(resolver: "App\\GraphQL\\Queries\\CalculationQuery@resolve")
+}
+
+type Mutation {
+    calculate(input: CalculateInput!): Calculation! @guard @field(resolver: "App\\GraphQL\\Mutations\\CalculationMutator@calculate")
+    evaluateExpression(expression: String!): Calculation! @guard @field(resolver: "App\\GraphQL\\Mutations\\CalculationMutator@evaluateExpression")
+    deleteCalculation(id: ID!): Calculation @guard @field(resolver: "App\\GraphQL\\Mutations\\CalculationMutator@deleteCalculation")
+    clearCalculations: Boolean! @guard @field(resolver: "App\\GraphQL\\Mutations\\CalculationMutator@clearCalculations")
+}
+
+input CalculateInput {
+    operand_a: Float!
+    operator: String!
+    operand_b: Float!
+}
+
+type Calculation {
+    id: ID!
+    expression: String!
+    operator: String
+    operand_a: Float
+    operand_b: Float
+    result: Float!
+    created_at: DateTime!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    avatar: String
+}

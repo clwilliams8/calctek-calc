@@ -1,0 +1,94 @@
+site_name: CalcTek Calculator
+site_description: Document-Driven Development documentation for the CalcTek Calculator
+site_url: https://docs.dev.calctek-calc.ai
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - search.highlight
+    - search.suggest
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Product:
+      - product/index.md
+      - Calculator: product/calculator.md
+  - Engineering:
+      - engineering/index.md
+      - Onboarding:
+          - Getting Started: engineering/onboarding/getting-started.md
+          - Local Environment: engineering/onboarding/local-environment.md
+      - Tech Specs:
+          - Backend API: engineering/tech-specs/backend-api.md
+          - Frontend: engineering/tech-specs/frontend.md
+          - Infrastructure: engineering/tech-specs/infrastructure.md
+      - Decisions:
+          - "ADR-001: Laravel + GraphQL": engineering/decisions/adr-001-laravel-graphql.md
+          - "ADR-002: SQLite": engineering/decisions/adr-002-sqlite.md
+          - "ADR-003: Google OAuth": engineering/decisions/adr-003-google-oauth.md
+  - Operations:
+      - operations/index.md
+      - GKE Runbook: operations/gke-runbook.md
+
+plugins:
+  - search

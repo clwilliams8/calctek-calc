@@ -1,0 +1,10 @@
+.env
+docker/ssl/
+node_modules/
+vendor/
+*.log
+.DS_Store
+.pnpm-store/
+.claude/
+backend/database/database.sqlite
+dist/

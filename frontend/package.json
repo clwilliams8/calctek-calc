@@ -1,0 +1,35 @@
+{
+  "name": "calctek-calc-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "@apollo/client": "^3.12.0",
+    "@vue/apollo-composable": "^4.2.1",
+    "graphql": "^16.10.0",
+    "graphql-tag": "^2.12.6",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0",
+    "lucide-vue-next": "^0.468.0",
+    "radix-vue": "^1.9.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@types/node": "^22.10.0",
+    "typescript": "~5.7.0",
+    "vue-tsc": "^2.2.0",
+    "vite": "^6.0.0",
+    "tailwindcss": "^3.4.17",
+    "@tailwindcss/vite": "^4.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49"
+  }
+}

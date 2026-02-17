@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: calctek-calc-ingress
+  namespace: calctek-calc
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - "APP_HOST_PLACEHOLDER"
+        - "API_HOST_PLACEHOLDER"
+        - "DOCS_HOST_PLACEHOLDER"
+      secretName: calctek-calc-tls
+  rules:
+    - host: "APP_HOST_PLACEHOLDER"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+    - host: "API_HOST_PLACEHOLDER"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 80
+    - host: "DOCS_HOST_PLACEHOLDER"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: docs-service
+                port:
+                  number: 8000
