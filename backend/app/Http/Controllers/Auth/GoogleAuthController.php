@@ -30,6 +30,9 @@ class GoogleAuthController extends Controller
 
         $frontendUrl = config('app.frontend_url');
 
-        return redirect("{$frontendUrl}/auth/callback?token={$token}");
+        return response()->view('auth.callback', [
+            'token' => $token,
+            'frontendUrl' => $frontendUrl,
+        ]);
     }
 }

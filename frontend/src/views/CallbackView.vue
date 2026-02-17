@@ -8,15 +8,15 @@ const router = useRouter()
 const route = useRoute()
 const { setToken, fetchUser } = useAuth()
 
-onMounted(() => {
+onMounted(async () => {
   const token = route.query.token as string | undefined
 
   if (token) {
     setToken(token)
-    fetchUser()
+    await fetchUser()
     router.replace('/')
   } else {
-    router.replace('/')
+    router.replace('/login')
   }
 })
 </script>

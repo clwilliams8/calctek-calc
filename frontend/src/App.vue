@@ -5,7 +5,7 @@ import { useAuth } from '@/composables/useAuth'
 
 const { isAuthenticated, fetchUser } = useAuth()
 
-onMounted(() => {
+onMounted(async () => {
   const saved = localStorage.getItem('theme')
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   if (saved === 'dark' || (!saved && prefersDark)) {
@@ -13,7 +13,7 @@ onMounted(() => {
   }
 
   if (isAuthenticated.value) {
-    fetchUser()
+    await fetchUser()
   }
 })
 </script>

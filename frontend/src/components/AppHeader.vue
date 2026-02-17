@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { Calculator, LogOut, Moon, Sun } from 'lucide-vue-next'
 import { useAuth } from '@/composables/useAuth'
 
-const { user, isAuthenticated, signIn, signOut } = useAuth()
+const { user, isAuthenticated, signIn, signOut, loading } = useAuth()
 
 const isDark = ref(false)
 
@@ -55,7 +55,8 @@ function toggleDarkMode() {
         <template v-else>
           <button
             @click="signIn"
-            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            :disabled="loading"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             <svg class="h-4 w-4" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
