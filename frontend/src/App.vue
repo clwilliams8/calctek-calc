@@ -2,10 +2,14 @@
 import { onMounted } from 'vue'
 import AppHeader from '@/components/AppHeader.vue'
 import { useAuth } from '@/composables/useAuth'
+import { registerDeepLinks } from '@/lib/deep-links'
+import router from '@/router'
 
 const { isAuthenticated, fetchUser } = useAuth()
 
 onMounted(async () => {
+  registerDeepLinks(router)
+
   const saved = localStorage.getItem('theme')
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   if (saved === 'dark' || (!saved && prefersDark)) {

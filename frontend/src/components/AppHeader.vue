@@ -19,17 +19,17 @@ function toggleDarkMode() {
 </script>
 
 <template>
-  <header class="border-b bg-card">
-    <div class="container mx-auto px-2 sm:px-4 h-16 flex items-center justify-between max-w-5xl">
-      <div class="flex items-center gap-2">
-        <Calculator class="h-6 w-6 text-primary" />
-        <span class="text-xl font-bold">CalcTek</span>
+  <header class="border-b bg-card safe-area-top">
+    <div class="mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between max-w-5xl">
+      <div class="flex items-center gap-2 shrink-0">
+        <Calculator class="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+        <span class="text-lg sm:text-xl font-bold">CalcTek</span>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
         <button
           @click="toggleDarkMode"
-          class="p-2 rounded-md hover:bg-accent transition-colors"
+          class="p-1.5 sm:p-2 rounded-md hover:bg-accent transition-colors"
           :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
         >
           <Sun v-if="isDark" class="h-4 w-4" />
@@ -41,12 +41,12 @@ function toggleDarkMode() {
             v-if="user.avatar"
             :src="user.avatar"
             :alt="user.name"
-            class="h-8 w-8 rounded-full"
+            class="h-7 w-7 sm:h-8 sm:w-8 rounded-full"
           />
           <span class="text-sm text-muted-foreground hidden sm:inline">{{ user.name }}</span>
           <button
             @click="signOut"
-            class="inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-md border hover:bg-accent transition-colors"
+            class="p-1.5 sm:px-3 sm:py-1.5 text-sm rounded-md border hover:bg-accent transition-colors inline-flex items-center gap-1.5"
           >
             <LogOut class="h-4 w-4" />
             <span class="hidden sm:inline">Sign out</span>
@@ -56,7 +56,7 @@ function toggleDarkMode() {
           <button
             @click="signIn"
             :disabled="loading"
-            class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>

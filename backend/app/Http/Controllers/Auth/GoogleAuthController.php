@@ -4,16 +4,21 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
-    public function redirect()
+    public function redirect(Request $request)
     {
+        if ($request->query('platform') === 'mobile') {
+            cookie()->queue('oauth_platform', 'mobile', 5);
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback()
+    public function callback(Request $request)
     {
         $googleUser = Socialite::driver('google')->user();
 
@@ -28,11 +33,16 @@ class GoogleAuthController extends Controller
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
+        $isMobile = $request->cookie('oauth_platform') === 'mobile';
+
+        if ($isMobile) {
+            cookie()->queue(cookie()->forget('oauth_platform'));
+
+            return redirect("calctekapp://auth/callback?token={$token}");
+        }
+
         $frontendUrl = config('app.frontend_url');
 
-        return response()->view('auth.callback', [
-            'token' => $token,
-            'frontendUrl' => $frontendUrl,
-        ]);
+        return redirect("{$frontendUrl}/auth/callback?token={$token}");
     }
 }

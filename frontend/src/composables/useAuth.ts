@@ -1,4 +1,6 @@
 import { ref, computed } from 'vue'
+import { Capacitor } from '@capacitor/core'
+import { Browser } from '@capacitor/browser'
 import { apolloClient } from '@/graphql/client'
 import { GET_ME } from '@/graphql/queries'
 
@@ -45,7 +47,13 @@ export function useAuth() {
 
   function signIn(): void {
     loading.value = true
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google/redirect`
+    const authUrl = `${import.meta.env.VITE_API_URL}/auth/google/redirect`
+
+    if (Capacitor.isNativePlatform()) {
+      Browser.open({ url: `${authUrl}?platform=mobile` })
+    } else {
+      window.location.replace(authUrl)
+    }
   }
 
   return {
