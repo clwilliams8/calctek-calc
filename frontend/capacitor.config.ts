@@ -15,7 +15,7 @@ const config: CapacitorConfig = {
     },
   },
   ios: {
-    scheme: 'CalcTek Calculator',
+    scheme: 'App',
   },
 };
 
