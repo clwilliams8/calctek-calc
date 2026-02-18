@@ -26,6 +26,7 @@ export function useAuth() {
   function signOut() {
     token.value = null
     user.value = null
+    loading.value = false
     localStorage.removeItem('auth_token')
   }
 
@@ -42,6 +43,8 @@ export function useAuth() {
       }
     } catch {
       signOut()
+    } finally {
+      loading.value = false
     }
   }
 
