@@ -44,7 +44,8 @@ NC := $(shell tput sgr0)
 DIVIDER := $(CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)
 
 .PHONY: start stop check help hosts ssl launchdaemon env docker network clean config setup logs logs-be logs-fe logs-docs logs-nginx restart status build build-be build-fe shell-be shell-fe health migrate tinker \
-	gke-init gke-cluster gke-registry gke-build gke-push gke-creds gke-ingress gke-deploy gke-ip gke-urls gke-status gke-logs gke-destroy gke-deploy-all gke-health gke-help
+	gke-init gke-cluster gke-registry gke-build gke-push gke-creds gke-ingress gke-deploy gke-ip gke-urls gke-status gke-logs gke-destroy gke-deploy-all gke-health gke-help \
+	mobile-build mobile-sync mobile-ios mobile-android mobile-run-ios mobile-run-android mobile-ssl-ios
 
 setup: check hosts ssl network launchdaemon config
 	@echo "$(GREEN)Setup complete!$(NC)"
@@ -535,3 +536,102 @@ gke-deploy-all: gke-init gke-cluster gke-registry gke-creds gke-ingress gke-buil
 	@echo "$(DIVIDER)"
 	@echo "$(GREEN)$(BOLD)Deployment complete!$(NC)"
 	@$(MAKE) gke-urls
+
+###################################################################
+# Mobile Development Commands (Capacitor)
+###################################################################
+
+# Install mkcert root CA into the booted iOS Simulator
+# Required once per simulator so the WebView trusts local HTTPS
+mobile-ssl-ios:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)Installing mkcert CA into iOS Simulator...$(NC)"
+	@CAROOT=$$(mkcert -CAROOT); \
+	if [ ! -f "$$CAROOT/rootCA.pem" ]; then \
+		echo "$(RED)❌ mkcert root CA not found at $$CAROOT/rootCA.pem$(NC)"; \
+		echo "$(YELLOW)Run 'mkcert -install' first to create the CA$(NC)"; \
+		exit 1; \
+	fi; \
+	xcrun simctl keychain booted add-root-cert "$$CAROOT/rootCA.pem"; \
+	echo "$(GREEN)✅ mkcert CA installed into the booted iOS Simulator$(NC)"; \
+	echo "$(CYAN)Restart the app in Xcode (Cmd+R) for it to take effect$(NC)"
+
+# Build static export and sync to native projects
+mobile-build:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)$(BOLD)Building mobile app...$(NC)"
+	@echo "$(DIVIDER)"
+	@echo "$(YELLOW)Step 1/2: Building Vite static export...$(NC)"
+	@cd frontend && pnpm run build
+	@echo "$(GREEN)✓ Static export complete$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Step 2/2: Syncing to native projects...$(NC)"
+	@cd frontend && npx cap sync
+	@echo ""
+	@echo "$(GREEN)$(BOLD)✅ Mobile build complete!$(NC)"
+	@echo "$(CYAN)Run 'make mobile-ios' or 'make mobile-android' to open in IDE$(NC)"
+
+# Sync web assets to native projects (skip rebuild)
+mobile-sync:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)Syncing web assets to native projects...$(NC)"
+	@cd frontend && npx cap sync
+	@echo "$(GREEN)✅ Sync complete!$(NC)"
+
+# Build, sync, and open Xcode
+mobile-ios:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)$(BOLD)Preparing iOS app...$(NC)"
+	@echo "$(DIVIDER)"
+	@echo "$(YELLOW)Step 1/3: Building Vite static export...$(NC)"
+	@cd frontend && pnpm run build
+	@echo "$(GREEN)✓ Static export complete$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Step 2/3: Syncing to iOS project...$(NC)"
+	@cd frontend && npx cap sync ios
+	@echo "$(GREEN)✓ iOS sync complete$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Step 3/3: Opening Xcode...$(NC)"
+	@cd frontend && npx cap open ios
+	@echo ""
+	@echo "$(GREEN)$(BOLD)✅ Xcode is open!$(NC)"
+	@echo "$(CYAN)Select a simulator and press Cmd+R to run$(NC)"
+
+# Build, sync, and open Android Studio
+mobile-android:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)$(BOLD)Preparing Android app...$(NC)"
+	@echo "$(DIVIDER)"
+	@echo "$(YELLOW)Step 1/3: Building Vite static export...$(NC)"
+	@cd frontend && pnpm run build
+	@echo "$(GREEN)✓ Static export complete$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Step 2/3: Syncing to Android project...$(NC)"
+	@cd frontend && npx cap sync android
+	@echo "$(GREEN)✓ Android sync complete$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Step 3/3: Opening Android Studio...$(NC)"
+	@cd frontend && npx cap open android
+	@echo ""
+	@echo "$(GREEN)$(BOLD)✅ Android Studio is open!$(NC)"
+	@echo "$(CYAN)Wait for Gradle sync, select emulator, and press Run$(NC)"
+
+# Build and run on iOS simulator with live reload
+mobile-run-ios:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)$(BOLD)Running iOS app with live reload...$(NC)"
+	@echo "$(DIVIDER)"
+	@echo "$(YELLOW)Building and launching on iOS simulator...$(NC)"
+	@echo "$(CYAN)Live reload enabled — changes to frontend code will auto-refresh$(NC)"
+	@echo ""
+	@cd frontend && npx cap run ios --livereload --external
+
+# Build and run on Android emulator with live reload
+mobile-run-android:
+	@echo "$(DIVIDER)"
+	@echo "$(CYAN)$(BOLD)Running Android app with live reload...$(NC)"
+	@echo "$(DIVIDER)"
+	@echo "$(YELLOW)Building and launching on Android emulator...$(NC)"
+	@echo "$(CYAN)Live reload enabled — changes to frontend code will auto-refresh$(NC)"
+	@echo ""
+	@cd frontend && npx cap run android --livereload --external

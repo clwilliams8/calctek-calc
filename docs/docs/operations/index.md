@@ -11,6 +11,7 @@ The production environment runs on **Google Kubernetes Engine (GKE)** with an Ng
 | Runbook | Description |
 |---------|-------------|
 | [GKE Deployment](gke-runbook.md) | Full deployment, troubleshooting, and teardown procedures |
+| [Mobile Apps](mobile-runbook.md) | Build and run iOS/Android apps with CapacitorJS |
 
 ## Quick Reference
 
@@ -22,3 +23,6 @@ The production environment runs on **Google Kubernetes Engine (GKE)** with an Ng
 | `make gke-logs` | Tail all pod logs |
 | `make gke-health` | Check backend health endpoint |
 | `make gke-destroy` | Full teardown (cluster + registry) |
+| `make mobile-ios` | Build + open Xcode for iOS |
+| `make mobile-android` | Build + open Android Studio |
+| `make mobile-build` | Build web + sync to native projects |

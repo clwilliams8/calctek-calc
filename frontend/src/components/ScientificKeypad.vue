@@ -95,7 +95,7 @@ function handleClick(btn: ButtonDef) {
 </script>
 
 <template>
-  <div class="grid grid-cols-10 gap-1">
+  <div class="grid grid-cols-10 gap-1.5 sm:gap-1">
     <template v-for="(row, ri) in rows" :key="ri">
       <button
         v-for="(btn, ci) in row"
@@ -103,7 +103,7 @@ function handleClick(btn: ButtonDef) {
         @click="handleClick(btn)"
         :disabled="!btn.label"
         :class="[
-          'h-10 rounded-lg text-xs font-medium transition-colors select-none',
+          'h-11 sm:h-10 min-h-[44px] sm:min-h-0 rounded-lg text-sm sm:text-xs font-medium transition-colors select-none active:scale-95',
           'flex items-center justify-center',
           btn.class || 'bg-muted hover:bg-muted/80',
           !btn.label ? 'invisible' : '',

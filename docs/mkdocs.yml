@@ -81,14 +81,17 @@ nav:
       - Tech Specs:
           - Backend API: engineering/tech-specs/backend-api.md
           - Frontend: engineering/tech-specs/frontend.md
+          - Mobile Apps: engineering/tech-specs/mobile.md
           - Infrastructure: engineering/tech-specs/infrastructure.md
       - Decisions:
           - "ADR-001: Laravel + GraphQL": engineering/decisions/adr-001-laravel-graphql.md
           - "ADR-002: SQLite": engineering/decisions/adr-002-sqlite.md
           - "ADR-003: Google OAuth": engineering/decisions/adr-003-google-oauth.md
+          - "ADR-004: CapacitorJS": engineering/decisions/adr-004-capacitorjs.md
   - Operations:
       - operations/index.md
       - GKE Runbook: operations/gke-runbook.md
+      - Mobile Runbook: operations/mobile-runbook.md
 
 plugins:
   - search

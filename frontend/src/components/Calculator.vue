@@ -45,7 +45,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
     <!-- Calculator Panel -->
     <div class="rounded-2xl border bg-card shadow-sm overflow-hidden">
-      <div class="p-4">
+      <div class="p-2 sm:p-4">
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-lg font-semibold">Scientific Calculator</h2>
         </div>

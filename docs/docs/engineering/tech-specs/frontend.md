@@ -26,8 +26,7 @@ graph TD
     RouterView --> Calculator
 
     Calculator --> CalculatorDisplay
-    Calculator --> CalculatorKeypad
-    Calculator --> ExpressionInput
+    Calculator --> ScientificKeypad
     Calculator --> TickerTape
 
     TickerTape --> TickerTapeItem
@@ -50,9 +49,8 @@ graph TD
 |-----------|------|---------------|
 | `AppHeader` | `AppHeader.vue` | Top navigation bar, user avatar, sign-in/sign-out |
 | `Calculator` | `Calculator.vue` | Main calculator layout, orchestrates child components |
-| `CalculatorDisplay` | `CalculatorDisplay.vue` | Shows current input and result |
-| `CalculatorKeypad` | `CalculatorKeypad.vue` | Numeric and operator button grid |
-| `ExpressionInput` | `ExpressionInput.vue` | Text input for complex expressions |
+| `CalculatorDisplay` | `CalculatorDisplay.vue` | Shows expression being built and result |
+| `ScientificKeypad` | `ScientificKeypad.vue` | Mac-style 10-column scientific calculator buttons (trig, log, powers, etc.) |
 | `TickerTape` | `TickerTape.vue` | Scrollable calculation history list |
 | `TickerTapeItem` | `TickerTapeItem.vue` | Single history entry with delete action |
 
@@ -120,3 +118,13 @@ make build-fe   # Rebuild frontend container
 ```
 
 Source files are mounted from `./frontend` on the host into `/app` in the container. Changes are reflected instantly via Vite HMR.
+
+## Mobile Apps (Capacitor)
+
+The frontend is wrapped with **CapacitorJS** for native iOS and Android distribution. See the [Mobile Apps Tech Spec](mobile.md) for full details.
+
+```bash
+make mobile-ios       # Build + open Xcode
+make mobile-android   # Build + open Android Studio
+make mobile-run-ios   # Live reload on iOS simulator
+```

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CalcTek Calculator</string>
+    <string name="title_activity_main">CalcTek Calculator</string>
+    <string name="package_name">com.calctek.calculator</string>
+    <string name="custom_url_scheme">com.calctek.calculator</string>
+</resources>

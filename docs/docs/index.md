@@ -63,6 +63,7 @@ graph TB
 | **Backend** | Laravel 11, Lighthouse GraphQL, PHP 8.3 |
 | **Auth** | Google OAuth via Socialite + Sanctum bearer tokens |
 | **Database** | SQLite |
+| **Mobile** | CapacitorJS (iOS + Android) |
 | **Infrastructure** | Docker Compose (local), GKE + Nginx Ingress (prod) |
 | **Docs** | MkDocs Material |
 
