@@ -140,4 +140,22 @@ class CalculatorServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->service->evaluateExpression($this->user, '???');
     }
+
+    public function test_evaluate_requirement_expression(): void
+    {
+        $calc = $this->service->evaluateExpression($this->user, 'sqrt((((9*9)/12)+(13-4))*2)^2)');
+        $this->assertEquals(31.5, $calc->result);
+    }
+
+    public function test_evaluate_expression_missing_closing_parens(): void
+    {
+        $calc = $this->service->evaluateExpression($this->user, '(2+3');
+        $this->assertEquals(5.0, $calc->result);
+    }
+
+    public function test_evaluate_expression_balanced_parens_unchanged(): void
+    {
+        $calc = $this->service->evaluateExpression($this->user, 'sqrt(16)');
+        $this->assertEquals(4.0, $calc->result);
+    }
 }

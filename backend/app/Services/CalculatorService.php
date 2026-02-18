@@ -47,7 +47,8 @@ class CalculatorService
 
     public function evaluateExpression(User $user, string $expression): Calculation
     {
-        $result = $this->executor->execute($expression);
+        $normalized = $this->normalizeExpression($expression);
+        $result = $this->executor->execute($normalized);
 
         $displayExpression = "{$expression} = ".$this->formatNumber($result);
 
@@ -58,6 +59,26 @@ class CalculatorService
             'operand_b' => null,
             'result' => $result,
         ]);
+    }
+
+    private function normalizeExpression(string $expression): string
+    {
+        $open = substr_count($expression, '(');
+        $close = substr_count($expression, ')');
+
+        if ($close > $open) {
+            // Remove excess closing parens from the right
+            $excess = $close - $open;
+            for ($i = 0; $i < $excess; $i++) {
+                $pos = strrpos($expression, ')');
+                $expression = substr_replace($expression, '', $pos, 1);
+            }
+        } elseif ($open > $close) {
+            // Append missing closing parens
+            $expression .= str_repeat(')', $open - $close);
+        }
+
+        return $expression;
     }
 
     private function formatNumber(float $number): string
