@@ -28,6 +28,9 @@ RUN composer install --no-dev --optimize-autoloader 2>/dev/null || true
 # Copy backend source code
 COPY backend/ ./
 
+# Remove any config cache from the source (will be rebuilt at runtime with proper env vars)
+RUN rm -f bootstrap/cache/config.php
+
 # Create SQLite database file if it doesn't exist
 RUN mkdir -p database && touch database/database.sqlite
 

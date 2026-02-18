@@ -141,7 +141,6 @@ spec:
               cp -r /var/www/html/* /shared/
               cp -r /var/www/html/database/. /db/
               cd /shared && php artisan migrate --force
-              cd /shared && php artisan config:cache
               chown -R www-data:www-data /shared/storage /shared/bootstrap/cache
               chown -R www-data:www-data /db
           volumeMounts:
