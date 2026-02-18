@@ -561,15 +561,22 @@ mobile-build:
 	@echo "$(DIVIDER)"
 	@echo "$(CYAN)$(BOLD)Building mobile app...$(NC)"
 	@echo "$(DIVIDER)"
-	@echo "$(YELLOW)Step 1/2: Building Vite static export...$(NC)"
-	@cd frontend && pnpm run build
-	@echo "$(GREEN)✓ Static export complete$(NC)"
-	@echo ""
-	@echo "$(YELLOW)Step 2/2: Syncing to native projects...$(NC)"
-	@cd frontend && npx cap sync
-	@echo ""
-	@echo "$(GREEN)$(BOLD)✅ Mobile build complete!$(NC)"
-	@echo "$(CYAN)Run 'make mobile-ios' or 'make mobile-android' to open in IDE$(NC)"
+	@LB_IP=$$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null); \
+	if [ -n "$$LB_IP" ]; then \
+		SSLIP_IP=$$(echo $$LB_IP | tr '.' '-'); \
+		API_URL="https://api.$$SSLIP_IP.sslip.io"; \
+		echo "$(CYAN)Baking VITE_API_URL=$$API_URL into mobile build$(NC)"; \
+		export VITE_API_URL=$$API_URL; \
+	fi; \
+	echo "$(YELLOW)Step 1/2: Building Vite static export...$(NC)"; \
+	cd frontend && pnpm run build && \
+	echo "$(GREEN)✓ Static export complete$(NC)" && \
+	echo "" && \
+	echo "$(YELLOW)Step 2/2: Syncing to native projects...$(NC)" && \
+	npx cap sync && \
+	echo "" && \
+	echo "$(GREEN)$(BOLD)✅ Mobile build complete!$(NC)" && \
+	echo "$(CYAN)Run 'make mobile-ios' or 'make mobile-android' to open in IDE$(NC)"
 
 # Sync web assets to native projects (skip rebuild)
 mobile-sync:
@@ -583,38 +590,52 @@ mobile-ios:
 	@echo "$(DIVIDER)"
 	@echo "$(CYAN)$(BOLD)Preparing iOS app...$(NC)"
 	@echo "$(DIVIDER)"
-	@echo "$(YELLOW)Step 1/3: Building Vite static export...$(NC)"
-	@cd frontend && pnpm run build
-	@echo "$(GREEN)✓ Static export complete$(NC)"
-	@echo ""
-	@echo "$(YELLOW)Step 2/3: Syncing to iOS project...$(NC)"
-	@cd frontend && npx cap sync ios
-	@echo "$(GREEN)✓ iOS sync complete$(NC)"
-	@echo ""
-	@echo "$(YELLOW)Step 3/3: Opening Xcode...$(NC)"
-	@cd frontend && npx cap open ios
-	@echo ""
-	@echo "$(GREEN)$(BOLD)✅ Xcode is open!$(NC)"
-	@echo "$(CYAN)Select a simulator and press Cmd+R to run$(NC)"
+	@LB_IP=$$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null); \
+	if [ -n "$$LB_IP" ]; then \
+		SSLIP_IP=$$(echo $$LB_IP | tr '.' '-'); \
+		API_URL="https://api.$$SSLIP_IP.sslip.io"; \
+		echo "$(CYAN)Baking VITE_API_URL=$$API_URL into mobile build$(NC)"; \
+		export VITE_API_URL=$$API_URL; \
+	fi; \
+	echo "$(YELLOW)Step 1/3: Building Vite static export...$(NC)"; \
+	cd frontend && pnpm run build && \
+	echo "$(GREEN)✓ Static export complete$(NC)" && \
+	echo "" && \
+	echo "$(YELLOW)Step 2/3: Syncing to iOS project...$(NC)" && \
+	npx cap sync ios && \
+	echo "$(GREEN)✓ iOS sync complete$(NC)" && \
+	echo "" && \
+	echo "$(YELLOW)Step 3/3: Opening Xcode...$(NC)" && \
+	npx cap open ios && \
+	echo "" && \
+	echo "$(GREEN)$(BOLD)✅ Xcode is open!$(NC)" && \
+	echo "$(CYAN)Select a simulator and press Cmd+R to run$(NC)"
 
 # Build, sync, and open Android Studio
 mobile-android:
 	@echo "$(DIVIDER)"
 	@echo "$(CYAN)$(BOLD)Preparing Android app...$(NC)"
 	@echo "$(DIVIDER)"
-	@echo "$(YELLOW)Step 1/3: Building Vite static export...$(NC)"
-	@cd frontend && pnpm run build
-	@echo "$(GREEN)✓ Static export complete$(NC)"
-	@echo ""
-	@echo "$(YELLOW)Step 2/3: Syncing to Android project...$(NC)"
-	@cd frontend && npx cap sync android
-	@echo "$(GREEN)✓ Android sync complete$(NC)"
-	@echo ""
-	@echo "$(YELLOW)Step 3/3: Opening Android Studio...$(NC)"
-	@cd frontend && npx cap open android
-	@echo ""
-	@echo "$(GREEN)$(BOLD)✅ Android Studio is open!$(NC)"
-	@echo "$(CYAN)Wait for Gradle sync, select emulator, and press Run$(NC)"
+	@LB_IP=$$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null); \
+	if [ -n "$$LB_IP" ]; then \
+		SSLIP_IP=$$(echo $$LB_IP | tr '.' '-'); \
+		API_URL="https://api.$$SSLIP_IP.sslip.io"; \
+		echo "$(CYAN)Baking VITE_API_URL=$$API_URL into mobile build$(NC)"; \
+		export VITE_API_URL=$$API_URL; \
+	fi; \
+	echo "$(YELLOW)Step 1/3: Building Vite static export...$(NC)"; \
+	cd frontend && pnpm run build && \
+	echo "$(GREEN)✓ Static export complete$(NC)" && \
+	echo "" && \
+	echo "$(YELLOW)Step 2/3: Syncing to Android project...$(NC)" && \
+	npx cap sync android && \
+	echo "$(GREEN)✓ Android sync complete$(NC)" && \
+	echo "" && \
+	echo "$(YELLOW)Step 3/3: Opening Android Studio...$(NC)" && \
+	npx cap open android && \
+	echo "" && \
+	echo "$(GREEN)$(BOLD)✅ Android Studio is open!$(NC)" && \
+	echo "$(CYAN)Wait for Gradle sync, select emulator, and press Run$(NC)"
 
 # Build and run on iOS simulator with live reload
 mobile-run-ios:
