@@ -8,3 +8,4 @@ vendor/
 .claude/
 backend/database/database.sqlite
 dist/
+*.tsbuildinfo
