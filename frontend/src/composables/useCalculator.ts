@@ -1,6 +1,6 @@
 import { ref, computed, watch } from 'vue'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { CALCULATE, EVALUATE_EXPRESSION, DELETE_CALCULATION, CLEAR_CALCULATIONS } from '@/graphql/mutations'
+import { EVALUATE_EXPRESSION, DELETE_CALCULATION, CLEAR_CALCULATIONS } from '@/graphql/mutations'
 import { GET_CALCULATIONS } from '@/graphql/queries'
 
 interface Calculation {
@@ -13,13 +13,12 @@ interface Calculation {
   created_at: string
 }
 
+// Multi-char tokens that backspace should remove as a unit
+const FUNCTION_TOKENS = ['sin(', 'cos(', 'tan(', 'sinh(', 'cosh(', 'tanh(', 'sqrt(', 'cbrt(', 'log(', 'ln(', 'exp(', 'abs(']
+
 export function useCalculator() {
+  const expression = ref('')
   const display = ref('0')
-  const previousOperand = ref<number | null>(null)
-  const currentOperator = ref<string | null>(null)
-  const waitingForSecondOperand = ref(false)
-  const expressionMode = ref(false)
-  const expressionInput = ref('')
   const error = ref<string | null>(null)
   const calculations = ref<Calculation[]>([])
   const loading = ref(false)
@@ -34,90 +33,64 @@ export function useCalculator() {
     }
   })
 
-  const { mutate: calculateMutate } = useMutation(CALCULATE)
   const { mutate: evaluateMutate } = useMutation(EVALUATE_EXPRESSION)
   const { mutate: deleteMutate } = useMutation(DELETE_CALCULATION)
   const { mutate: clearMutate } = useMutation(CLEAR_CALCULATIONS)
 
-  function inputDigit(digit: string) {
+  function appendToExpression(text: string) {
     error.value = null
-    if (waitingForSecondOperand.value) {
-      display.value = digit
-      waitingForSecondOperand.value = false
-    } else {
-      display.value = display.value === '0' ? digit : display.value + digit
-    }
+    expression.value += text
+    // Update display to show the expression being built
+    display.value = expression.value || '0'
   }
 
-  function inputDecimal() {
-    if (waitingForSecondOperand.value) {
-      display.value = '0.'
-      waitingForSecondOperand.value = false
-      return
-    }
-    if (!display.value.includes('.')) {
-      display.value += '.'
-    }
+  function clear() {
+    expression.value = ''
+    display.value = '0'
+    error.value = null
   }
 
-  function selectOperator(operator: string) {
-    error.value = null
-    const current = parseFloat(display.value)
+  function backspace() {
+    if (!expression.value) return
 
-    if (previousOperand.value !== null && !waitingForSecondOperand.value) {
-      performCalculation()
-      return
-    }
-
-    previousOperand.value = current
-    currentOperator.value = operator
-    waitingForSecondOperand.value = true
-  }
-
-  async function performCalculation() {
-    if (previousOperand.value === null || !currentOperator.value) return
-
-    const operandB = parseFloat(display.value)
-    loading.value = true
-    error.value = null
-
-    try {
-      const result = await calculateMutate({
-        input: {
-          operand_a: previousOperand.value,
-          operator: currentOperator.value,
-          operand_b: operandB,
-        },
-      })
-
-      if (result?.data?.calculate) {
-        display.value = String(result.data.calculate.result)
-        previousOperand.value = null
-        currentOperator.value = null
-        waitingForSecondOperand.value = false
-        await refetchCalculations()
+    // Check if expression ends with a multi-char function token
+    for (const token of FUNCTION_TOKENS) {
+      if (expression.value.endsWith(token)) {
+        expression.value = expression.value.slice(0, -token.length)
+        display.value = expression.value || '0'
+        return
       }
-    } catch (e: any) {
-      error.value = e.graphQLErrors?.[0]?.message || e.message || 'Calculation failed'
-    } finally {
-      loading.value = false
     }
+
+    // Remove last character
+    expression.value = expression.value.slice(0, -1)
+    display.value = expression.value || '0'
   }
 
-  async function evaluateExpression() {
-    if (!expressionInput.value.trim()) return
+  async function evaluate() {
+    if (!expression.value.trim()) return
 
     loading.value = true
     error.value = null
+
+    // Translate display operators to math operators for the backend
+    let expr = expression.value
+    expr = expr.replaceAll('×', '*')
+    expr = expr.replaceAll('÷', '/')
+    expr = expr.replaceAll('−', '-')
+    // Replace ln( with log( for MathExecutor (which uses log for natural log)
+    expr = expr.replaceAll('ln(', 'log(')
+    // Replace log₁₀ syntax — we use log10( in the expression
+    expr = expr.replaceAll('log10(', 'log10(')
 
     try {
       const result = await evaluateMutate({
-        expression: expressionInput.value,
+        expression: expr,
       })
 
       if (result?.data?.evaluateExpression) {
         display.value = String(result.data.evaluateExpression.result)
-        expressionInput.value = ''
+        expression.value = ''
         await refetchCalculations()
       }
     } catch (e: any) {
@@ -125,15 +98,6 @@ export function useCalculator() {
     } finally {
       loading.value = false
     }
-  }
-
-  function clear() {
-    display.value = '0'
-    previousOperand.value = null
-    currentOperator.value = null
-    waitingForSecondOperand.value = false
-    expressionInput.value = ''
-    error.value = null
   }
 
   async function deleteCalculation(id: string) {
@@ -166,22 +130,16 @@ export function useCalculator() {
   const hasHistory = computed(() => calculations.value.length > 0)
 
   return {
+    expression,
     display,
-    previousOperand,
-    currentOperator,
-    waitingForSecondOperand,
-    expressionMode,
-    expressionInput,
     error,
     calculations,
     loading,
     hasHistory,
-    inputDigit,
-    inputDecimal,
-    selectOperator,
-    performCalculation,
-    evaluateExpression,
+    appendToExpression,
     clear,
+    backspace,
+    evaluate,
     deleteCalculation,
     clearAllCalculations,
     refetchCalculations,
