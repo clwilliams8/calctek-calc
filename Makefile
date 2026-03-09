@@ -282,7 +282,8 @@ clean:
 ###################################################################
 
 # GKE default variables
-GCP_PROJECT_ID ?= $(shell echo $$GCP_PROJECT_ID)
+GCP_ACCOUNT ?= coltonwilliams645@gmail.com
+GCP_PROJECT_ID ?= calculator-demo-487717
 GCP_REGION ?= us-central1
 GCP_ZONE ?= us-central1-a
 GKE_CLUSTER_NAME ?= calctek-calc-cluster
@@ -299,7 +300,8 @@ K8S_NAMESPACE = calctek-calc
 gke-init:
 	@echo "$(DIVIDER)"
 	@echo "$(CYAN)Initializing Google Cloud...$(NC)"
-	@gcloud auth login --no-launch-browser 2>/dev/null || gcloud auth login
+	@echo "$(CYAN)Switching to GCP account: $(GCP_ACCOUNT)$(NC)"
+	@gcloud config set account $(GCP_ACCOUNT)
 	@gcloud config set project $(GCP_PROJECT_ID)
 	@echo "$(CYAN)Enabling required APIs...$(NC)"
 	@gcloud services enable container.googleapis.com artifactregistry.googleapis.com
@@ -516,16 +518,19 @@ gke-health:
 # Full teardown — delete cluster and registry
 gke-destroy:
 	@echo "$(DIVIDER)"
+	@echo "$(CYAN)Switching to GCP account: $(GCP_ACCOUNT)$(NC)"
+	@gcloud config set account $(GCP_ACCOUNT)
+	@gcloud config set project $(GCP_PROJECT_ID)
 	@echo "$(RED)$(BOLD)WARNING: This will delete the GKE cluster and all resources!$(NC)"
 	@echo "$(DIVIDER)"
 	@read -p "Are you sure? (y/N) " confirm; \
 	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
 		echo "$(CYAN)Deleting GKE cluster...$(NC)"; \
 		gcloud container clusters delete $(GKE_CLUSTER_NAME) \
-			--zone $(GCP_ZONE) --quiet 2>/dev/null || true; \
+			--zone $(GCP_ZONE) --project $(GCP_PROJECT_ID) --quiet; \
 		echo "$(CYAN)Deleting Artifact Registry...$(NC)"; \
 		gcloud artifacts repositories delete $(AR_REPO_NAME) \
-			--location=$(GCP_REGION) --quiet 2>/dev/null || true; \
+			--location=$(GCP_REGION) --project $(GCP_PROJECT_ID) --quiet; \
 		echo "$(GREEN)Teardown complete.$(NC)"; \
 	else \
 		echo "$(YELLOW)Cancelled.$(NC)"; \
